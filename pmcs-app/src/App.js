@@ -89,7 +89,7 @@ function Navbar({ activeNav, setActiveNav }) {
             ))}
             {/* Landing page link */}
             <a
-              href="/landing.html"
+              href="/"
               className="px-4 py-2 rounded-md text-sm font-medium transition-all duration-150 border"
               style={{ color: '#0F7A3D', borderColor: '#0F7A3D', backgroundColor: 'transparent' }}
             >
