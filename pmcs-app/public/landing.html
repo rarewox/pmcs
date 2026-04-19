@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMCS — Petroleum Monitoring &amp; Compliance System | ZehiTech</title>
+  <link rel="icon" href="./pmcs-logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── VARIABLES ──────────────────────────────────────────── */
+    :root {
+      --white:  #FFFFFF;
+      --navy:   #0B1F3A;
+      --green:  #1D9E75;
+      --green-d:#168a64;
+      --red:    #E24B4A;
+      --amber:  #BA7517;
+      --gray:   #F7F8FA;
+      --text:   #3a4a60;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
+      color: var(--navy);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── UTILITIES ──────────────────────────────────────────── */
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .tag {
+      display: inline-block;
+      background: rgba(29,158,117,.12);
+      color: var(--green);
+      border: 1px solid rgba(29,158,117,.3);
+      border-radius: 20px;
+      padding: 3px 13px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    .section-eyebrow { text-align: center; margin-bottom: 12px; }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 5vw, 54px);
+      color: var(--navy);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      font-size: 15px;
+      font-weight: 300;
+      color: var(--text);
+      text-align: center;
+      max-width: 520px;
+      margin: 0 auto 60px;
+      line-height: 1.75;
+    }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────── */
+    @keyframes livePulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.4; transform:scale(.8); }
+    }
+    @keyframes truckBlink {
+      0%,100% { opacity:1; }
+      50%      { opacity:.15; }
+    }
+    @keyframes dashFlow {
+      from { stroke-dashoffset: 0; }
+      to   { stroke-dashoffset: -28; }
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ─── BUTTONS ────────────────────────────────────────────── */
+    .btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 6px;
+      padding: 11px 26px;
+      text-decoration: none;
+      display: inline-block;
+      border: 2px solid transparent;
+      transition: all .22s;
+    }
+    .btn-green  { background: var(--green); color: var(--white); }
+    .btn-green:hover  { background: var(--green-d); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(29,158,117,.35); }
+    .btn-navy   { background: var(--navy); color: var(--white); }
+    .btn-navy:hover   { background: #0d2747; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(11,31,58,.3); }
+    .btn-white  { background: var(--white); color: var(--green); border-color: transparent; }
+    .btn-white:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.15); }
+    .btn-ghost  { background: transparent; color: var(--white); border-color: rgba(255,255,255,.5); }
+    .btn-ghost:hover  { background: rgba(255,255,255,.12); }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: var(--white);
+      border-bottom: 1px solid rgba(11,31,58,.07);
+      box-shadow: 0 2px 18px rgba(11,31,58,.06);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo img { height: 36px; width: 36px; object-fit: contain; }
+    .nav-logo-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: var(--navy);
+      letter-spacing: .08em;
+      line-height: 1;
+    }
+    .nav-logo-text span { color: var(--green); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--navy);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(29,158,117,.1);
+      border: 1px solid rgba(29,158,117,.25);
+      border-radius: 20px;
+      padding: 4px 11px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: livePulse 1.8s ease-in-out infinite;
+    }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--navy);
+      border-radius: 2px;
+      transition: all .3s;
+    }
+    .mob-menu {
+      display: none;
+      position: fixed;
+      top: 64px; left: 0; right: 0;
+      background: var(--white);
+      border-bottom: 1px solid rgba(11,31,58,.1);
+      padding: 12px 24px 20px;
+      z-index: 999;
+    }
+    .mob-menu.open { display: block; }
+    .mob-menu a {
+      display: block;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(11,31,58,.06);
+    }
+    .mob-menu a:last-child { border-bottom: none; }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    #hero {
+      padding-top: 64px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--white);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.05fr;
+      gap: 56px;
+      align-items: center;
+      padding: 72px 24px 80px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .hero-h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(56px, 8vw, 96px);
+      line-height: .94;
+      color: var(--navy);
+      margin-bottom: 22px;
+    }
+    .hero-h1 em { font-style: normal; color: var(--green); }
+    .hero-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.75;
+      max-width: 460px;
+      margin-bottom: 34px;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+    .hero-stats {
+      display: flex;
+      gap: 36px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(11,31,58,.08);
+    }
+    .h-stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 38px;
+      color: var(--green);
+      line-height: 1;
+    }
+    .h-stat-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #8a9bb0;
+      margin-top: 2px;
+    }
+
+    /* Map panel */
+    .map-panel {
+      background: var(--navy);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 28px 90px rgba(11,31,58,.38);
+    }
+    .map-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 20px;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .map-topbar-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.38);
+    }
+    .map-svg-area { padding: 14px 20px 8px; position: relative; }
+
+    /* Nigeria SVG map elements */
+    .ng-outline { fill: rgba(29,158,117,.08); stroke: rgba(255,255,255,.32); stroke-width: 3.5; stroke-linejoin: round; }
+    .ng-grid-line { stroke: rgba(255,255,255,.04); stroke-width: 1; }
+    .route-anim {
+      fill: none;
+      stroke: var(--green);
+      stroke-width: 3;
+      stroke-dasharray: 12,8;
+      opacity: .75;
+      animation: dashFlow 1.4s linear infinite;
+    }
+    .route-dim {
+      fill: none;
+      stroke: rgba(255,255,255,.12);
+      stroke-width: 2;
+      stroke-dasharray: 8,8;
+    }
+    .depot-ring { fill: rgba(29,158,117,.18); stroke: var(--green); stroke-width: 3; }
+    .depot-core { fill: var(--green); }
+    .truck-dot  {
+      fill: var(--green);
+      animation: truckBlink 2s ease-in-out infinite;
+    }
+    .truck-dot.d1 { animation-delay: .0s; }
+    .truck-dot.d2 { animation-delay: .5s; }
+    .truck-dot.d3 { animation-delay: 1.0s; }
+    .truck-dot.d4 { animation-delay: 1.5s; }
+    .truck-dot.d5 { animation-delay: .75s; }
+    .alert-truck { fill: var(--red); animation: truckBlink 1s ease-in-out infinite; }
+    .zone-label  { font-family: 'Barlow Condensed', sans-serif; font-size: 18px; font-weight: 600; fill: rgba(255,255,255,.3); letter-spacing: .12em; }
+    .zone-label-green { fill: var(--green); opacity: .7; }
+    .city-label  { font-family: 'Barlow Condensed', sans-serif; font-size: 16px; font-weight: 600; fill: rgba(255,255,255,.55); letter-spacing: .06em; }
+
+    /* Map KPI row */
+    .map-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid rgba(255,255,255,.05);
+    }
+    .map-kpi {
+      padding: 13px 16px;
+      text-align: center;
+      border-right: 1px solid rgba(255,255,255,.05);
+    }
+    .map-kpi:last-child { border-right: none; }
+    .map-kpi-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--green);
+    }
+    .map-kpi-num.red { color: var(--red); }
+    .map-kpi-num.white { color: var(--white); }
+    .map-kpi-label {
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      margin-top: 2px;
+    }
+
+    /* ─── HOW IT WORKS ───────────────────────────────────────── */
+    #how {
+      background: var(--gray);
+      padding: 100px 0;
+    }
+    .steps-row {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 27px;
+      left: calc(12.5% + 14px);
+      width: calc(75% - 28px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--green), rgba(29,158,117,.2));
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 18px;
+      position: relative;
+    }
+    .step-num {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid var(--green);
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 0 0 6px rgba(29,158,117,.08);
+    }
+    .step-zone { margin-bottom: 10px; }
+    .step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 21px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .step-desc { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.65; }
+
+    /* ─── FEATURES ───────────────────────────────────────────── */
+    #features { background: var(--white); padding: 100px 0; }
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    .feat-card {
+      border: 1px solid rgba(11,31,58,.1);
+      border-radius: 12px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+      transition: all .3s;
+      cursor: default;
+    }
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 3px;
+      background: var(--green);
+      transition: width .32s ease;
+    }
+    .feat-card:hover::after { width: 100%; }
+    .feat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 36px rgba(11,31,58,.1);
+      border-color: rgba(29,158,117,.22);
+    }
+    .feat-icon { font-size: 34px; margin-bottom: 16px; }
+    .feat-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .feat-desc { font-size: 13.5px; font-weight: 300; color: var(--text); line-height: 1.7; }
+
+    /* ─── DASHBOARD PREVIEW ──────────────────────────────────── */
+    #dashboard { background: var(--gray); padding: 100px 0; }
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 44px;
+      align-items: start;
+    }
+
+    /* Mock OS window */
+    .mock-win {
+      background: var(--navy);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(11,31,58,.35);
+    }
+    .win-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.028);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .wdot { width: 11px; height: 11px; border-radius: 50%; }
+    .wr { background: #FF5F57; }
+    .wy { background: #FFBD2E; }
+    .wg { background: #28C840; }
+    .win-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.28);
+      margin-left: 8px;
+    }
+    .win-body { padding: 18px; }
+
+    /* KPI row inside window */
+    .w-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .w-kpi {
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 8px;
+      padding: 11px 12px;
+    }
+    .w-kpi-lbl {
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.3);
+      margin-bottom: 4px;
+    }
+    .w-kpi-val {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      line-height: 1;
+    }
+    .vg { color: var(--green); }
+    .vr { color: var(--red); }
+    .va { color: var(--amber); }
+    .vw { color: var(--white); }
+
+    /* Alert feed */
+    .w-sec { font-size: 8px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 7px; }
+    .w-alert {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 9px;
+      background: rgba(255,255,255,.025);
+      border-radius: 5px;
+      margin-bottom: 4px;
+    }
+    .w-adot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .w-amsg { font-size: 9.5px; color: rgba(255,255,255,.55); flex: 1; }
+    .w-atime { font-size: 8.5px; color: rgba(255,255,255,.22); }
+
+    /* Truck table */
+    .w-tbl { width: 100%; border-collapse: collapse; margin: 14px 0; }
+    .w-tbl th {
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.22);
+      text-align: left;
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .w-tbl td {
+      font-size: 9.5px;
+      color: rgba(255,255,255,.55);
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.03);
+    }
+    .w-badge {
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .bg-g { background: rgba(29,158,117,.18); color: var(--green); }
+    .bg-a { background: rgba(186,117,23,.2);  color: var(--amber); }
+    .bg-r { background: rgba(226,75,74,.18);  color: var(--red);   }
+
+    /* Zone bars */
+    .z-bar { margin-bottom: 8px; }
+    .z-bar-hd { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .z-bar-lbl { font-size: 8.5px; color: rgba(255,255,255,.35); letter-spacing: .08em; text-transform: uppercase; }
+    .z-bar-pct { font-size: 8.5px; color: var(--green); font-weight: 600; }
+    .z-track { height: 4px; background: rgba(255,255,255,.07); border-radius: 4px; }
+    .z-fill  { height: 100%; background: var(--green); border-radius: 4px; }
+
+    /* Right side cards */
+    .dash-cards { display: flex; flex-direction: column; gap: 16px; }
+    .dash-card {
+      background: var(--white);
+      border-left: 3px solid var(--green);
+      border-radius: 0 10px 10px 0;
+      padding: 20px 22px;
+      box-shadow: 0 2px 14px rgba(11,31,58,.07);
+    }
+    .dash-card-icon { font-size: 26px; margin-bottom: 8px; }
+    .dash-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .dash-card-desc { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.65; }
+
+    /* ─── ROLES ──────────────────────────────────────────────── */
+    #roles { background: var(--white); padding: 100px 0; }
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+    .role-card {
+      border: 1px solid rgba(11,31,58,.1);
+      border-radius: 12px;
+      padding: 26px 22px;
+      transition: all .28s;
+      cursor: default;
+    }
+    .role-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 44px rgba(11,31,58,.12);
+      border-left: 4px solid var(--green);
+      padding-left: 18px;
+    }
+    .role-icon { font-size: 38px; margin-bottom: 14px; }
+    .role-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .role-desc { font-size: 13px; font-weight: 300; color: var(--text); line-height: 1.65; }
+
+    /* ─── METRICS ────────────────────────────────────────────── */
+    #metrics { background: var(--navy); padding: 80px 0; }
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .m-cell {
+      text-align: center;
+      padding: 24px 16px;
+      border-right: 1px solid rgba(255,255,255,.08);
+    }
+    .m-cell:last-child { border-right: none; }
+    .m-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 6vw, 76px);
+      color: var(--green);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .m-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+    }
+    .m-sub { font-size: 11px; color: rgba(255,255,255,.22); margin-top: 4px; }
+
+    /* ─── ROADMAP ────────────────────────────────────────────── */
+    #roadmap { background: var(--gray); padding: 100px 0; }
+    .road-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    .road-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 30px;
+      border: 1px solid rgba(11,31,58,.08);
+      position: relative;
+    }
+    .road-card.active {
+      border-color: var(--green);
+      box-shadow: 0 8px 40px rgba(29,158,117,.13);
+    }
+    .road-card.active::after {
+      content: 'ACTIVE';
+      position: absolute;
+      top: 20px; right: 20px;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: .15em;
+      color: var(--green);
+      background: rgba(29,158,117,.1);
+      border: 1px solid rgba(29,158,117,.25);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .road-phase {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+    .road-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 30px;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .road-time { font-size: 12px; font-weight: 300; color: #8a9bb0; margin-bottom: 20px; }
+    .road-list { list-style: none; }
+    .road-list li {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text);
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(11,31,58,.05);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.55;
+    }
+    .road-list li::before { content: '→'; color: var(--green); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+    .road-list li:last-child { border-bottom: none; }
+
+    /* ─── CTA BAND ───────────────────────────────────────────── */
+    #cta {
+      background: var(--green);
+      padding: 100px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-wm {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(100px, 18vw, 200px);
+      color: rgba(255,255,255,.055);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      letter-spacing: .1em;
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(42px, 6vw, 70px);
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .cta-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: rgba(255,255,255,.82);
+      max-width: 500px;
+      margin: 0 auto 40px;
+      line-height: 1.75;
+    }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────── */
+    footer { background: var(--navy); padding: 28px 0; }
+    .foot-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    .foot-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .foot-logo img { height: 30px; width: 30px; object-fit: contain; opacity: .75; }
+    .foot-logo-text { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--white); letter-spacing: .08em; }
+    .foot-logo-text span { color: var(--green); }
+    .foot-copy { font-size: 12px; font-weight: 300; color: rgba(255,255,255,.3); }
+    .foot-built { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.3); }
+    .foot-built em { font-style: normal; color: var(--green); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .nav-links, .nav-right { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-grid { grid-template-columns: 1fr; gap: 36px; padding: 40px 24px 60px; }
+      .hero-stats { gap: 20px; flex-wrap: wrap; }
+
+      .steps-row { grid-template-columns: 1fr; gap: 32px; }
+      .steps-row::before { display: none; }
+
+      .feat-grid { grid-template-columns: 1fr; }
+
+      .dash-grid { grid-template-columns: 1fr; }
+      .w-kpi-row { grid-template-columns: repeat(2, 1fr); }
+
+      .roles-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
+      .m-cell { border-right: none; border-bottom: 1px solid rgba(255,255,255,.08); }
+      .m-cell:nth-child(odd)  { border-right: 1px solid rgba(255,255,255,.08); }
+      .m-cell:nth-last-child(-n+2) { border-bottom: none; }
+
+      .road-grid { grid-template-columns: 1fr; }
+
+      .foot-inner { flex-direction: column; gap: 14px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     1. NAVIGATION
+══════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="./pmcs-logo.png" alt="PMCS Logo" />
+      <span class="nav-logo-text">PM<span>C</span>S</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        Live
+      </div>
+      <a href="/" class="btn btn-green">Request Demo</a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mob-menu" id="mobMenu">
+  <a href="#how"       onclick="closeMob()">How It Works</a>
+  <a href="#features"  onclick="closeMob()">Features</a>
+  <a href="#dashboard" onclick="closeMob()">Dashboard</a>
+  <a href="#roadmap"   onclick="closeMob()">Roadmap</a>
+  <a href="/"          style="color:var(--green); margin-top:8px;" onclick="closeMob()">Request Demo →</a>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     2. HERO
+══════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-grid">
+
+    <!-- Left: copy -->
+    <div>
+      <div class="hero-eyebrow">
+        <span class="tag">National Infrastructure</span>
+        <div class="live-badge"><span class="live-dot"></span>System Active</div>
+      </div>
+
+      <h1 class="hero-h1">
+        Nigeria's<br/>
+        <em>Petroleum</em><br/>
+        Control Grid
+      </h1>
+
+      <p class="hero-sub">
+        PMCS is a real-time digital infrastructure platform that monitors,
+        tracks, and validates petroleum product transportation across all
+        36 states — eliminating diversion, fraud, and supply chain leakage.
+      </p>
+
+      <div class="hero-btns">
+        <a href="/" class="btn btn-green">Request a Demo</a>
+        <a href="#how" class="btn btn-navy">How It Works</a>
+      </div>
+
+      <div class="hero-stats">
+        <div>
+          <div class="h-stat-num" data-target="36">0</div>
+          <div class="h-stat-label">States Covered</div>
+        </div>
+        <div>
+          <div class="h-stat-num" data-target="3">0</div>
+          <div class="h-stat-label">Logistics Zones</div>
+        </div>
+        <div>
+          <div class="h-stat-num">99.5%</div>
+          <div class="h-stat-label">System Uptime</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Nigeria map panel -->
+    <div class="map-panel">
+      <div class="map-topbar">
+        <span class="map-topbar-title">⬤ PMCS Fleet Monitor — Nigeria Grid</span>
+        <div class="live-badge"><span class="live-dot"></span>Live</div>
+      </div>
+
+      <div class="map-svg-area">
+        <!-- Nigeria SVG — geographically accurate (lon/lat mapped to 500×440 space)
+             Origin: 2.72°E / 13.9°N  |  Scale: x=40px/°lon  y=43.3px/°lat         -->
+        <svg viewBox="0 0 1000 1080" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+
+          <!-- Coordinate grid -->
+          <line x1="250" y1="0"   x2="250" y2="1080" class="ng-grid-line"/>
+          <line x1="500" y1="0"   x2="500" y2="1080" class="ng-grid-line"/>
+          <line x1="750" y1="0"   x2="750" y2="1080" class="ng-grid-line"/>
+          <line x1="0"   y1="270" x2="1000" y2="270" class="ng-grid-line"/>
+          <line x1="0"   y1="540" x2="1000" y2="540" class="ng-grid-line"/>
+          <line x1="0"   y1="810" x2="1000" y2="810" class="ng-grid-line"/>
+
+          <!-- ── Nigeria outline from ngMap.svg (Adobe Illustrator traced)
+               Geographic formula: x = 100 + (lon − 2.7) × 68.3
+                                   y = 100 + (13.9 − lat) × 91.7           ── -->
+          <path class="ng-outline" d="M708.95,747.25c-15.51,9.55-29.21,4.14-42.45-6.79l-13.15-10.85c-12.24-10.1-24.88-.76-34.86,4.46-17.48,9.14-33.31,19.76-47.53,33.6-11.7,11.39-22.38,23.2-31.06,37.09-9.61,15.39-15.74,45.36-24.15,65.88-4.53,11.04-13.1,17.71-25.41,19.31l-132.45,17.27c-9.18,1.2-17.95,1.51-26.66-.84-11.36-3.05-21.8-7.9-31.72-14.04-45.2-28.02-23.47-72.72-82.05-112.91-9.35-6.42-18.15-10.25-29.97-10.75l-76.17-3.21c-5.95-.25-11.77-1.05-16.68-4.33-5.39-3.6-7.94-9.95-7.99-16.95l-1.22-165.43c-.19-26.04,26.25-23.91,33.39-35.38,7.71-12.4,13.47-25.27,19.59-38.54l17.96-39.02c4.23-9.19,7.09-18.15,5.55-28.54-4.48-30.31-18.83-43-14.75-85.93,3.08-32.41,6.52-52.36,24.05-80.56,11.89-19.13,17.78-35.43,43.13-43.58,15.98-5.14,31.86-9.37,48.22-13.52,10.04-2.55,19.74-3.32,30.18-4.2,32.75,4.09,63.57.71,84.22,30.52,3.96,5.71,8.12,11.1,12.58,16.33,10.31,12.08,24.99,7.98,39.37,3.71,29.95-8.9,51.36,2.86,78.25,14.25,33,8.85,64.25,12.64,96.17-1.94l23.37-10.67c9.15-4.18,18.42-7.78,28.5-9.31,17.15-2.61,34-3.54,51.43-3.48,47.9.17,64.68,21.32,90.74,9.39,16.15-7.39,26.93-18.07,45.28-26.69,35.07-16.48,56.11,33.2,62.4,58.96,4.3,17.59,7.2,24.61,20.83,33.64,12.79,8.48,20.06,22.62,17.91,37.83-2.52,17.88-13.28,32.73-28.78,41.49l-18.57,10.49c-7.18,4.06-12.7,9.43-16.51,17.05l-46.63,93.17c-8.89,17.77-16.68,35-27.41,51.59-9.93,15.36-30.38,27-38.2,43.79-10.31,22.13-12.44,60.48-20.74,82.61-7.06,18.82-21.06,34.62-38,45.04ZM732.38,698.01c8.48-22.41,9.89-58.21,21.18-84.03,8.32-19.04,30.1-32.78,38.24-44.53,11.28-16.26,18.82-33.76,27.72-51.53l46.67-93.16c5.13-10.23,12.36-17.99,22.14-23.54l19.74-11.18c9.15-5.18,15.13-12.85,18.99-22.6,4.56-11.51,1.07-24.12-9.87-30.87-34.41-21.21-17.86-52.03-49.11-87.37-21.3-24.09-53.94,39.35-100.92,26.33l-18.84-5.22c-13.06-3.62-25.92-6.25-39.73-6.26-18.25-.02-36.23.25-54.1,3.94-31.26,6.45-52.83,31.11-99.93,29.11-17.58-.75-35.24-1.88-51.51-8.51l-29.07-11.85c-27.94-11.39-41.86,1.03-65.36,2.59s-33.04-15.7-44.9-31.78c-14.43-19.56-33.06-18.63-55.1-21.43-12.8-1.63-25.05-1.7-37.78,1.21-17.58,4.01-34.5,8.79-51.65,14.2-10.35,3.27-18.24,9.48-24,18.62-6.27,9.95-12.01,19.84-17.66,30.28-9.91,18.32-13.17,38.26-15.15,58.9-4.31,45.01,10.17,53.19,14.58,87.04,1.71,13.1-1.14,24.98-7.18,36.33s-10.03,21.78-15.14,32.94c-6.61,14.43-12.95,28.36-20.65,42.18-12.95,23.23-33.66,14.25-33.53,32.7l1.19,163.12c.02,2.27.73,4.43,2.18,5.28,1.1.64,2.92,1.15,4.79,1.24l81.96,3.72c13.19.6,23.92,5.1,34.42,12.42,16.95,11.8,31.63,25.69,41.58,43.94,19.4,35.59,12.89,58.81,57.65,77.9,9.29,3.96,18.09,5.92,28.62,4.54l135.66-17.7c6.96-.91,11.14-4.39,13.54-10.56,13.79-35.41,12.28-54.21,37.09-84.65,20.13-24.69,43.96-44.83,72.48-59.16,6.97-3.5,12.95-7.48,20.59-9.35,29.71-7.27,39.48,22.13,59.85,25.83,11.35,2.06,34.43-23.51,40.32-39.06Z"/>
+
+          <!-- Zone boundary horizontals (~7.5°N and ~11°N) -->
+          <line x1="100" y1="704" x2="900" y2="704" stroke="rgba(255,255,255,.07)" stroke-width="2" stroke-dasharray="12,10"/>
+          <line x1="100" y1="334" x2="900" y2="334" stroke="rgba(255,255,255,.07)" stroke-width="2" stroke-dasharray="12,10"/>
+
+          <!-- Zone labels -->
+          <text x="120" y="860" class="zone-label">ZONE A</text>
+          <text x="120" y="530" class="zone-label">ZONE B</text>
+          <text x="120" y="200" class="zone-label">ZONE C</text>
+
+          <!-- ── Routes ── -->
+          <!-- Lagos(147,783) → Abuja(420,543) — animated -->
+          <path d="M 147,783 Q 283,663 420,543" class="route-anim" style="animation-delay:0s"/>
+          <!-- PH(396,932) → Abuja(420,543) — animated -->
+          <path d="M 396,932 Q 408,738 420,543" class="route-anim" style="animation-delay:0.6s"/>
+          <!-- Abuja(420,543) → Kano(497,274) — animated -->
+          <path d="M 420,543 Q 458,408 497,274"  class="route-anim" style="animation-delay:1.2s"/>
+          <!-- Sokoto(273,177) → Kano(497,274) — dim -->
+          <path d="M 273,177 Q 385,226 497,274"  class="route-dim"/>
+          <!-- Abuja(420,543) → Maiduguri(814,288) — dim -->
+          <path d="M 420,543 Q 617,416 814,288"  class="route-dim"/>
+
+          <!-- ── Depot markers ── -->
+          <!-- Lagos — Zone A hub -->
+          <circle cx="147" cy="783" r="18" class="depot-ring"/>
+          <circle cx="147" cy="783" r="8"  class="depot-core"/>
+          <text   x="170"  y="779" class="city-label">LAGOS</text>
+
+          <!-- Port Harcourt -->
+          <circle cx="396" cy="932" r="14" class="depot-ring"/>
+          <circle cx="396" cy="932" r="6"  class="depot-core"/>
+          <text   x="414"  y="928" class="city-label">P/HARCOURT</text>
+
+          <!-- Abuja — Zone B hub -->
+          <circle cx="420" cy="543" r="18" class="depot-ring"/>
+          <circle cx="420" cy="543" r="8"  class="depot-core"/>
+          <text   x="443"  y="539" class="city-label">ABUJA</text>
+
+          <!-- Kano — Zone C hub -->
+          <circle cx="497" cy="274" r="16" class="depot-ring"/>
+          <circle cx="497" cy="274" r="7"  class="depot-core"/>
+          <text   x="517"  y="270" class="city-label">KANO</text>
+
+          <!-- Sokoto -->
+          <circle cx="273" cy="177" r="12" class="depot-ring"/>
+          <circle cx="273" cy="177" r="5"  class="depot-core"/>
+          <text   x="290"  y="173" class="city-label">SOKOTO</text>
+
+          <!-- Maiduguri -->
+          <circle cx="814" cy="288" r="12" class="depot-ring"/>
+          <circle cx="814" cy="288" r="5"  class="depot-core"/>
+          <text   x="830"  y="284" class="city-label">MAIDUGURI</text>
+
+          <!-- ── Animated truck dots ── -->
+          <!-- Lagos→Abuja route, ~⅓ -->
+          <circle cx="237" cy="704" r="9" class="truck-dot d1"/>
+          <!-- Lagos→Abuja route, ~⅔ -->
+          <circle cx="330" cy="622" r="9" class="truck-dot d2"/>
+          <!-- PH→Abuja route, mid -->
+          <circle cx="408" cy="738" r="9" class="truck-dot d3"/>
+          <!-- Abuja→Kano route, mid -->
+          <circle cx="458" cy="408" r="9" class="truck-dot d4"/>
+          <!-- Alert truck — red (near PH delta coast) -->
+          <circle cx="345" cy="980" r="9" class="alert-truck d5"/>
+
+        </svg>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="map-kpi-row">
+        <div class="map-kpi">
+          <div class="map-kpi-num">247</div>
+          <div class="map-kpi-label">Active Trucks</div>
+        </div>
+        <div class="map-kpi">
+          <div class="map-kpi-num red">3</div>
+          <div class="map-kpi-label">Live Alerts</div>
+        </div>
+        <div class="map-kpi">
+          <div class="map-kpi-num">94.2%</div>
+          <div class="map-kpi-label">Compliance</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     3. HOW IT WORKS
+══════════════════════════════════════════════════════════ -->
+<section id="how">
+  <div style="padding: 0 24px;">
+    <div class="section-eyebrow"><span class="tag">Process</span></div>
+    <h2 class="section-title">How PMCS Works</h2>
+    <p class="section-sub">A structured four-stage digital chain of custody from depot dispatch to verified delivery — fully auditable and tamper-resistant.</p>
+  </div>
+
+  <div class="steps-row">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-zone"><span class="tag">Zone A</span></div>
+      <div class="step-title">Dispatch &amp; Loading</div>
+      <p class="step-desc">Tanker is registered, loaded, sealed, and a digital waybill is generated at the source depot. Volume and seal are recorded on-chain.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-zone"><span class="tag">In Transit</span></div>
+      <div class="step-title">Live Monitoring</div>
+      <p class="step-desc">GPS-enabled real-time tracking verifies the tanker follows its authorized route. Deviations and unauthorized stops trigger instant alerts.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-zone"><span class="tag">Zone B</span></div>
+      <div class="step-title">Checkpoint Handover</div>
+      <p class="step-desc">Zonal officers verify the tanker's seal integrity, manifested volume, and driver credentials at designated transfer checkpoints.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-zone"><span class="tag">Zone C</span></div>
+      <div class="step-title">Final Delivery</div>
+      <p class="step-desc">Destination depot scans and confirms final delivery volume. Any variance triggers an immediate compliance flag for regulatory review.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     4. CORE FEATURES
+══════════════════════════════════════════════════════════ -->
+<section id="features">
+  <div class="container">
+    <div class="section-eyebrow"><span class="tag">Platform Capabilities</span></div>
+    <h2 class="section-title">Core Features</h2>
+    <p class="section-sub">Six interconnected modules built for government-grade petroleum logistics oversight at national scale.</p>
+
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📡</div>
+        <div class="feat-title">GPS Live Tracking</div>
+        <p class="feat-desc">Sub-60-second position updates for every active tanker. Geofenced corridors auto-detect route deviations and trigger zonal alerts in real time.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📄</div>
+        <div class="feat-title">Digital Waybill</div>
+        <p class="feat-desc">QR-signed, tamper-evident electronic manifests replace paper documents. Every waybill is verifiable at any checkpoint along the route.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚖️</div>
+        <div class="feat-title">Volume Verification</div>
+        <p class="feat-desc">Automated comparison of loaded vs. delivered volumes with configurable tolerance thresholds. Variance reports are flagged for investigation.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🚨</div>
+        <div class="feat-title">Alerts Engine</div>
+        <p class="feat-desc">Multi-tier alert system for route deviation, unauthorized stops, seal breach, and volume mismatch. Escalation paths route to the correct authority level.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔗</div>
+        <div class="feat-title">Chain of Custody</div>
+        <p class="feat-desc">Every custody transfer is digitally recorded with officer ID, timestamp, and GPS coordinates — creating an immutable audit trail from source to delivery.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-title">Reporting &amp; Analytics</div>
+        <p class="feat-desc">Regulatory dashboards, exportable compliance reports, zone-level performance metrics, and trend analytics for DPR and NNPC oversight.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     5. DASHBOARD PREVIEW
+══════════════════════════════════════════════════════════ -->
+<section id="dashboard">
+  <div class="container">
+    <div class="section-eyebrow"><span class="tag">Operations Center</span></div>
+    <h2 class="section-title">Command &amp; Control Dashboard</h2>
+    <p class="section-sub">A single-pane view for regulators, zonal officers, and depot operators — purpose-built for petroleum logistics oversight.</p>
+
+    <div class="dash-grid">
+
+      <!-- Mock OS window -->
+      <div class="mock-win">
+        <div class="win-bar">
+          <span class="wdot wr"></span>
+          <span class="wdot wy"></span>
+          <span class="wdot wg"></span>
+          <span class="win-title">PMCS Operations Center v2.1 — Live Mode</span>
+        </div>
+        <div class="win-body">
+
+          <!-- KPI tiles -->
+          <div class="w-kpi-row">
+            <div class="w-kpi">
+              <div class="w-kpi-lbl">Active Trucks</div>
+              <div class="w-kpi-val vg">247</div>
+            </div>
+            <div class="w-kpi">
+              <div class="w-kpi-lbl">Live Alerts</div>
+              <div class="w-kpi-val vr">3</div>
+            </div>
+            <div class="w-kpi">
+              <div class="w-kpi-lbl">Compliance</div>
+              <div class="w-kpi-val vg">94.2%</div>
+            </div>
+            <div class="w-kpi">
+              <div class="w-kpi-lbl">Trips Today</div>
+              <div class="w-kpi-val vw">318</div>
+            </div>
+          </div>
+
+          <!-- Alert feed -->
+          <div class="w-sec">Alert Feed</div>
+          <div class="w-alert">
+            <span class="w-adot" style="background:var(--red)"></span>
+            <span class="w-amsg">TK-0117 — Route deviation detected (12 km off-corridor, Ogun State)</span>
+            <span class="w-atime">08:14</span>
+          </div>
+          <div class="w-alert">
+            <span class="w-adot" style="background:var(--red)"></span>
+            <span class="w-amsg">TK-0041 — Unauthorized stop, 27 min, outside designated waypoint</span>
+            <span class="w-atime">09:02</span>
+          </div>
+          <div class="w-alert">
+            <span class="w-adot" style="background:var(--amber)"></span>
+            <span class="w-amsg">TK-0203 — Volume mismatch 3.4% below manifested quantity</span>
+            <span class="w-atime">10:30</span>
+          </div>
+          <div class="w-alert" style="margin-bottom:14px">
+            <span class="w-adot" style="background:var(--green)"></span>
+            <span class="w-amsg">TK-0256 — Delivery confirmed at Makurdi Station. Volume verified ✓</span>
+            <span class="w-atime">12:48</span>
+          </div>
+
+          <!-- Truck table -->
+          <div class="w-sec">Truck Status</div>
+          <table class="w-tbl">
+            <thead>
+              <tr>
+                <th>Truck ID</th>
+                <th>Status</th>
+                <th>Volume</th>
+                <th>Zone</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TK-0041</td>
+                <td><span class="w-badge bg-a">In Transit</span></td>
+                <td>33,000 L</td>
+                <td>A → B</td>
+              </tr>
+              <tr>
+                <td>TK-0089</td>
+                <td><span class="w-badge bg-g">Delivered</span></td>
+                <td>30,000 L</td>
+                <td>B → C</td>
+              </tr>
+              <tr>
+                <td>TK-0117</td>
+                <td><span class="w-badge bg-r">Alert</span></td>
+                <td>45,000 L</td>
+                <td>A</td>
+              </tr>
+              <tr>
+                <td>TK-0256</td>
+                <td><span class="w-badge bg-g">Delivered</span></td>
+                <td>36,000 L</td>
+                <td>B → C</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Zone compliance bars -->
+          <div class="w-sec">Zone Compliance</div>
+          <div class="z-bar">
+            <div class="z-bar-hd"><span class="z-bar-lbl">Zone A — South</span><span class="z-bar-pct">97%</span></div>
+            <div class="z-track"><div class="z-fill" style="width:97%"></div></div>
+          </div>
+          <div class="z-bar">
+            <div class="z-bar-hd"><span class="z-bar-lbl">Zone B — Central</span><span class="z-bar-pct">91%</span></div>
+            <div class="z-track"><div class="z-fill" style="width:91%"></div></div>
+          </div>
+          <div class="z-bar">
+            <div class="z-bar-hd"><span class="z-bar-lbl">Zone C — North</span><span class="z-bar-pct">94%</span></div>
+            <div class="z-track"><div class="z-fill" style="width:94%"></div></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: feature cards -->
+      <div class="dash-cards">
+        <div class="dash-card">
+          <div class="dash-card-icon">📱</div>
+          <div class="dash-card-title">Mobile Field App</div>
+          <p class="dash-card-desc">Driver and depot operator apps with offline capability — waybill scan, volume entry, and custody confirmation work without internet.</p>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">🗺️</div>
+          <div class="dash-card-title">Live National Map</div>
+          <p class="dash-card-desc">Full-screen Nigeria fleet map with real-time truck positions, route overlays, depot markers, and zone boundary visualization.</p>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">🔐</div>
+          <div class="dash-card-title">Role-Based Access</div>
+          <p class="dash-card-desc">Granular RBAC — Super Admin, Zonal Officer, Depot Operator, and Driver roles with isolated data visibility and action permissions.</p>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-icon">🔄</div>
+          <div class="dash-card-title">Offline Sync</div>
+          <p class="dash-card-desc">Field data captured offline is queued and synced automatically when connectivity is restored. No data loss in low-signal zones.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     6. USER ROLES
+══════════════════════════════════════════════════════════ -->
+<section id="roles">
+  <div class="container">
+    <div class="section-eyebrow"><span class="tag">Access Levels</span></div>
+    <h2 class="section-title">Who Uses PMCS</h2>
+    <p class="section-sub">Four purpose-designed user roles — each with scoped access, tailored views, and specific workflows.</p>
+
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-icon">🛡️</div>
+        <div class="role-title">Super Admin</div>
+        <p class="role-desc">Full system access across all zones. Manages user accounts, system config, compliance thresholds, and regulatory exports for DPR and NNPC.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">📍</div>
+        <div class="role-title">Zonal Officer</div>
+        <p class="role-desc">Oversees fleet movements within an assigned zone. Verifies checkpoint handovers, investigates alerts, and approves transit clearances.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🏭</div>
+        <div class="role-title">Depot Operator</div>
+        <p class="role-desc">Manages loading and receiving at a specific depot. Issues digital waybills, records volumes, verifies seals, and logs delivery confirmations.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-icon">🚛</div>
+        <div class="role-title">Driver</div>
+        <p class="role-desc">Mobile-only access. Views assigned route, scans waypoint QR codes, receives instructions from zonal officers, and logs delivery confirmation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     7. IMPACT METRICS
+══════════════════════════════════════════════════════════ -->
+<section id="metrics">
+  <div class="container">
+    <div class="section-eyebrow" style="margin-bottom:36px;">
+      <span class="tag" style="background:rgba(29,158,117,.15);border-color:rgba(29,158,117,.3);">By The Numbers</span>
+    </div>
+    <div class="metrics-row">
+      <div class="m-cell">
+        <div class="m-num" data-target="5">0</div>
+        <div class="m-label">Second Update Interval</div>
+        <div class="m-sub">GPS position refresh rate</div>
+      </div>
+      <div class="m-cell">
+        <div class="m-num">99.5%</div>
+        <div class="m-label">Platform Uptime</div>
+        <div class="m-sub">SLA-guaranteed availability</div>
+      </div>
+      <div class="m-cell">
+        <div class="m-num" data-target="36">0</div>
+        <div class="m-label">States Covered</div>
+        <div class="m-sub">Full federal territory reach</div>
+      </div>
+      <div class="m-cell">
+        <div class="m-num" style="color:var(--red)">0</div>
+        <div class="m-label">Tolerated Diversions</div>
+        <div class="m-sub">Every movement accounted for</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     8. ROADMAP
+══════════════════════════════════════════════════════════ -->
+<section id="roadmap">
+  <div class="container">
+    <div class="section-eyebrow"><span class="tag">Product Roadmap</span></div>
+    <h2 class="section-title">Build Phases</h2>
+    <p class="section-sub">A structured three-phase delivery from MVP pilot to a national intelligent petroleum monitoring network.</p>
+
+    <div class="road-grid">
+
+      <div class="road-card active">
+        <div class="road-phase">Phase 1 — MVP</div>
+        <div class="road-name">Foundation</div>
+        <div class="road-time">Months 1 – 4</div>
+        <ul class="road-list">
+          <li>GPS-enabled fleet tracking &amp; geofencing</li>
+          <li>Digital waybill generation and QR verification</li>
+          <li>Driver mobile app (iOS &amp; Android)</li>
+          <li>Depot loading and delivery confirmation module</li>
+          <li>Zonal officer dashboard and alert management</li>
+          <li>Basic compliance reports and audit logs</li>
+        </ul>
+      </div>
+
+      <div class="road-card">
+        <div class="road-phase">Phase 2 — Smart</div>
+        <div class="road-name">Intelligence</div>
+        <div class="road-time">Months 5 – 9</div>
+        <ul class="road-list">
+          <li>Volume sensor IoT integration at depots</li>
+          <li>AI-powered anomaly detection on routes</li>
+          <li>Predictive diversion risk scoring</li>
+          <li>Offline-first mobile sync architecture</li>
+          <li>Multi-zone dashboard for Super Admin</li>
+          <li>DPR regulatory data export &amp; API gateway</li>
+        </ul>
+      </div>
+
+      <div class="road-card">
+        <div class="road-phase">Phase 3 — Intel</div>
+        <div class="road-name">National Scale</div>
+        <div class="road-time">Month 10+</div>
+        <ul class="road-list">
+          <li>Blockchain-anchored chain-of-custody ledger</li>
+          <li>Cross-agency data sharing (NNPC, NMDPRA, Customs)</li>
+          <li>National petroleum movement intelligence hub</li>
+          <li>Driver biometric verification at checkpoints</li>
+          <li>Real-time satellite imagery correlation</li>
+          <li>Public-facing compliance transparency portal</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     9. CTA BAND
+══════════════════════════════════════════════════════════ -->
+<section id="cta">
+  <div class="cta-wm">PMCS</div>
+  <div class="container cta-content">
+    <h2 class="cta-h2">Ready to Deploy PMCS?</h2>
+    <p class="cta-sub">
+      Join the national rollout. Request a live demonstration of the operations center
+      or download the full Product Requirements Document.
+    </p>
+    <div class="cta-btns">
+      <a href="/" class="btn btn-white">Request a Demo</a>
+      <a href="#" class="btn btn-ghost">Download Full PRD</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     10. FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="foot-inner">
+    <a href="#" class="foot-logo">
+      <img src="./pmcs-logo.png" alt="PMCS Logo"/>
+      <span class="foot-logo-text">PM<span>C</span>S</span>
+    </a>
+    <p class="foot-copy">© 2026 PMCS — Petroleum Monitoring &amp; Compliance System. All rights reserved.</p>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+  /* ── Mobile menu ── */
+  const ham = document.getElementById('hamburger');
+  const mob = document.getElementById('mobMenu');
+  ham.addEventListener('click', () => mob.classList.toggle('open'));
+  function closeMob() { mob.classList.remove('open'); }
+
+  /* ── Smooth active nav highlight ── */
+  const sections = document.querySelectorAll('section[id]');
+  const navAs = document.querySelectorAll('.nav-links a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navAs.forEach(a => {
+          a.style.color = a.getAttribute('href') === '#' + id
+            ? 'var(--green)' : '';
+        });
+      }
+    });
+  }, { threshold: 0.35 });
+  sections.forEach(s => observer.observe(s));
+
+  /* ── Counter animation ── */
+  function animateCount(el, target) {
+    const dur = 1400;
+    const start = performance.now();
+    const step = now => {
+      const t = Math.min((now - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      el.textContent = Math.round(ease * target);
+      if (t < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const countEls = document.querySelectorAll('[data-target]');
+  const countObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        animateCount(e.target, parseInt(e.target.dataset.target));
+        countObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  countEls.forEach(el => countObs.observe(el));
+
+  /* ── Navbar shrink on scroll ── */
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 20) {
+      nav.style.boxShadow = '0 4px 24px rgba(11,31,58,0.1)';
+    } else {
+      nav.style.boxShadow = '0 2px 18px rgba(11,31,58,0.06)';
+    }
+  });
+
+  /* ── Fade-up on scroll for cards ── */
+  const fadeEls = document.querySelectorAll(
+    '.feat-card, .role-card, .road-card, .step, .dash-card, .m-cell'
+  );
+  const fadeObs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.animation = `fadeUp 0.5s ease both`;
+        e.target.style.animationDelay = `${(i % 4) * 0.08}s`;
+        fadeObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  fadeEls.forEach(el => {
+    el.style.opacity = '0';
+    fadeObs.observe(el);
+  });
+</script>
+
+</body>
+</html>
